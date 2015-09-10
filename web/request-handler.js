@@ -13,7 +13,6 @@ exports.handleRequest = function (req, res) {
   if (req.method === 'GET') {
     utils.serveAssets(res, pathname);
   } else if (req.method === 'POST') {
-    console.log(pathname)
     utils.handlePostRequest(req, res)
   }
   //res.end(archive.paths.list);

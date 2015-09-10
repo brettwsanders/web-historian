@@ -11,7 +11,7 @@ exports.headers = headers = {
   'Content-Type': "text/html"
 };
 
-exports.serveAssets = function(res, asset, callback) {
+exports.serveAssets = function(res, asset, status, callback) {
   // Write some code here that helps serve up your static files!
   // (Static files are things like html (yours or archived from others...),
   // css, or anything that doesn't change often.)
@@ -23,10 +23,10 @@ exports.serveAssets = function(res, asset, callback) {
   if (isPublicAsset){
     fs.readFile(__dirname + '/public' + asset, function(err, data) {
       if (err) {
-        res.writeHead(500);
+        res.writeHead(500, headers);
         return res.end('Error loading public asset');
       } else {
-        res.writeHead(200);
+        res.writeHead(200, headers);
         res.end(data);
         if(callback)
           callback(data);
@@ -36,10 +36,10 @@ exports.serveAssets = function(res, asset, callback) {
     //return site
     fs.readFile(__dirname + '/../test/testdata/sites' + asset, function(err, data) {
       if (err) {
-        res.writeHead(404);
+        res.writeHead(404, headers);
         return res.end("Error file doesn't exist");
       } else {
-        res.writeHead(200);
+        res.writeHead(200, headers);
         res.end(data);
         if(callback)
           callback(data);
@@ -66,14 +66,13 @@ exports.handlePostRequest = function(req, res) {
   });
   req.on('end', function() {
     var url = data.toString().substring(4);
-    
+
     console.log('url ' + url);
     archive.isUrlArchived(url, function(archiveExists){
       console.log('archive exists :',archiveExists);
       if(archiveExists){
         res.writeHead(302, {
-          'Location': '127.0.0.1:8080/' + url
-          //add other headers here...
+          'Location': 'http://127.0.0.1:8080/' + url
         });
         res.end();
       } else {
@@ -83,13 +82,16 @@ exports.handlePostRequest = function(req, res) {
             archive.addUrlToList(url, function() {
               console.log(url + 'added to list')
               res.writeHead(302, {
-                'Location': '127.0.0.1:8080/loading.html'
-                //add other headers here...
+                'Location': 'http://127.0.0.1:8080/loading.html'
               });
               res.end();
             });
           }
-        });
+          res.writeHead(302, {
+            'Location': 'http://127.0.0.1:8080/loading.html'
+          });
+          res.end();
+        });     
       }
     });  
   });

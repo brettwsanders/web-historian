@@ -29,7 +29,6 @@ exports.initialize = function(pathsObj) {
 
 exports.readListOfUrls = function(cb) {
   fs.readFile(__dirname + '/../test/testdata/sites.txt', function(err, data) {
-    console.log(data.toString());
     var urlArray;
     if(data.toString())
       urlArray = data.toString().split('\n');
@@ -41,7 +40,6 @@ exports.readListOfUrls = function(cb) {
 
 exports.isUrlInList = function(url, cb) {
   exports.readListOfUrls(function(urlArray) {
-    console.log(urlArray);
     var contains = urlArray.indexOf(url) === -1? false: true;
     cb(contains);
   });
